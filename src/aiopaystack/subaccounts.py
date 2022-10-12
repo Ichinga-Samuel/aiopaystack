@@ -28,14 +28,13 @@ class SubAccounts(Base):
                 "percentage_charge": percentage_charge, 'description': description} | kwargs
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
         """
         List subaccounts available on your integration.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param to:
         :param from_:
-        :param kwargs:
         :return:
         """
         params = {'perPage': perPage, 'page': page} | {key: value for key, value in (('from', from_), ('to', to)) if value}
@@ -60,5 +59,3 @@ class SubAccounts(Base):
         """
         data = {'id_or_code': id_or_code, 'business_name': business_name, 'settlement_bank': settlement_bank} | kwargs
         return await self.put(url=self.url(""), json=data)
-
-
