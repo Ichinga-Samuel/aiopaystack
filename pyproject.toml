@@ -1,6 +1,29 @@
+
 [build-system]
 requires = [
     "setuptools>=42",
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiopaystack"
+version = "0.1.8"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+keywords = ['paystack', 'asynchronous']
+dependencies = ['httpx >= 0.23.0']
+authors = [{name = "Ichinga Samuel", email = "ichingasamuel@gmail.com"}]
+description = "Asynchronous PayStack library"
+
+[project.optional-dependencies]
+dev = ["pytest-asyncio>=0.19.0"]
+
+[project.urls]
+"Homepage" = "https://github.com/Ichinga-Samuel/aiopaystack"
+"Bug Tracker" = "https://github.com/Ichinga-Samuel/aiopaystack/issues"

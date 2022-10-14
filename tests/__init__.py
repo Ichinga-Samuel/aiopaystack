@@ -1,6 +1,6 @@
 import pytest
 
-from aiopaystack.paystack import Paystack
+from paystack.paystack import Paystack
 
 
 @pytest.mark.asyncio

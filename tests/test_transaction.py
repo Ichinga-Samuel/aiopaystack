@@ -1,13 +1,7 @@
-import pytest
-
-from aiopaystack.transactions import Transactions
+from paystack.transactions import Transactions
 
 from . import BaseTest
-
-
-@pytest.fixture(scope='class')
-def init():
-    return {'email': "ichingasamuel@gmail.com", 'amount': "50000", "kwargs": {}}
+from .fixtures import init
 
 
 class TestTransaction(BaseTest):

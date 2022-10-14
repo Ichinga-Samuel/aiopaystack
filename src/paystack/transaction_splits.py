@@ -38,7 +38,7 @@ class TransactionSplits(Base):
         :param kwargs: Optional keyword query parameters as keyword args
         :return: Response
         """
-        params = kwargs | {key: value for key, value in (('name', name), ('active', active), ('from', from_)) if value}
+        params = {key: value for key, value in (('name', name), ('active', active), ('from', from_)) if value} | kwargs
         return await self.get(url=self.url(''), params=params)
 
     async def search(self, name: str, active: bool, from_: datetime | None = None, **kwargs):

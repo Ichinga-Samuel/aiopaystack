@@ -26,17 +26,16 @@ class Customers(Base):
         data = kwargs | {'email': email, 'last_name': last_name, 'first_name': first_name}
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, perPage: int = 50, page: int = 1, from_: datetime | None = None, **kwargs):
+    async def list(self, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
         """
         List customers available on your integration
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param from_: A timestamp from which to start listing customers e.g.
-        :param kwargs: Optional params as kwargs
+        :param to: A timestamp at which to stop listing product e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
         :return: Response
         """
-        params = kwargs | {'perPage': perPage, 'page': page}
-        params.update(**{'from': from_}) if from_ else from_
+        params = {key: value for key, value in (('perPage', perPage), ('page', page), ('from', from_), ('to', to))}
         return await self.get(url=self.url(""), params=params)
 
     async def fetch(self, *, email_or_code: str):
