@@ -35,7 +35,7 @@ class Customers(Base):
         :param to: A timestamp at which to stop listing product e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
         :return: Response
         """
-        params = {key: value for key, value in (('perPage', perPage), ('page', page), ('from', from_), ('to', to))}
+        params = {key: value for key, value in (('perPage', perPage), ('page', page), ('from', from_), ('to', to)) if value}
         return await self.get(url=self.url(""), params=params)
 
     async def fetch(self, *, email_or_code: str):

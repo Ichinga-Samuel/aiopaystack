@@ -1,5 +1,5 @@
 
-class Misc:
+class Miscellanous:
 
     def __init__(self, req):
         self.req = req
