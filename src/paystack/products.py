@@ -20,7 +20,7 @@ class Products(Base):
         :param price: Price should be in kobo if currency is NGN, pesewas, if currency is GHS, and cents, if currency is ZAR
         :param currency: Currency in which price is set. Allowed values are: NGN, GHS, ZAR or USD
         :kwargs:
-        :return:
+        :return: Response
         """
         data = {'name': name, 'description': description, 'price': price, 'currency': currency, **kwargs}
         return await self.post(url=self.url(""), json=data)
@@ -32,7 +32,7 @@ class Products(Base):
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param from_: A timestamp from which to start listing product e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
         :param to: A timestamp at which to stop listing product e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
-        :return:
+        :return: Response
         """
         params = {key: value for key, value in (('perPage', perPage), ('page', page), ('from', from_), ('to', to))}
         return await self.get(url=self.url(""), params=params)
@@ -41,9 +41,10 @@ class Products(Base):
         """
         Get details of a product on your integration.
         :param id: The product ID you want to fetch
-        :return:
+        :return: Response
         """
-        return await self.get(url=self.url(f"{id}"))
+        params = {'id': id}
+        return await self.get(url=self.url(f"{id}"), params=params)
 
     async def update(self, *, id: str, name: str, description: str, price: int, currency: str, **kwargs):
         """
@@ -54,7 +55,7 @@ class Products(Base):
         :param price: Price should be in kobo if currency is NGN, pesewas, if currency is GHS, and cents, if currency is ZAR
         :param currency: Currency in which price is set. Allowed values are: NGN, GHS, ZAR or USD
         :param kwargs:
-        :return:
+        :return: Response
         """
-        data = {'name': name, 'description': description, 'price': price, 'currency': currency, **kwargs}
+        data = {'id': id, 'name': name, 'description': description, 'price': price, 'currency': currency, **kwargs}
         return await self.put(url=self.url(f"{id}"), json=data)

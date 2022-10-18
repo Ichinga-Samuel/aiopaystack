@@ -21,9 +21,9 @@ class TransferRecipient(Base):
         :param account_number: Required if type is nuban or basa
         :param bank_code: Required if type is nuban or basa. You can get the list of Bank Codes by calling the List Banks endpoint.
         :param kwargs:
-        :return:
+        :return: Response
         """
-        data = {key: value for key, value in (('type', type), ('name', name), ('account_number', account_number), ('bank_code', bank_code)) if value}
+        data = {key: value for key, value in (('type', type), ('name', name), ('account_number', account_number), ('bank_code', bank_code)), **kwargs if value}
         return await self.post(url=self.url(""), json=data)
 
     async def bulk_create(self, *, batch: list[dict]):
@@ -31,9 +31,10 @@ class TransferRecipient(Base):
         Create multiple transfer recipients in batches. A duplicate account number will lead to the retrieval of the existing record.
         :param batch: A list of transfer recipient object. Each object should contain type, name, and bank_code.
          Any Create Transfer Recipient param can also be passed.
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url("bulk"), json={"batch": batch})
+        data = {'batch': batch}
+        return await self.post(url=self.url("bulk"), json=data)
 
     async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
         """
@@ -42,18 +43,19 @@ class TransferRecipient(Base):
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
         :param from_:   A timestamp from which to start listing transfer recipients e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
         :param to:      A timestamp at which to stop listing transfer recipients e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
-        :return:
+        :return: Response
         """
-        params = {'perPage': perPage, 'page': page} | {key: value for key, value in (('from', from_), ('to', to)) if value}
+        params = {key: value for key, value in (('from', from_), ('to', to), ('perPage', perPage), ('page', page)) if value}
         return await self.get(url=self.url(""), params=params)
 
     async def fetch(self, *, id_or_code):
         """
         Fetch the details of a transfer recipient
         :param id_or_code: An ID or code for the recipient whose details you want to receive
-        :return:
+        :return: Response
         """
-        return await self.get(url=self.url(f"{id_or_code}"))
+        params = {'id_or_code': id_or_code}
+        return await self.get(url=self.url(f"{id_or_code}"), params=params)
 
     async def update(self, *, id_or_code: str, name: str, email: str = ""):
         """
@@ -61,9 +63,9 @@ class TransferRecipient(Base):
         :param id_or_code:
         :param name: A name for the recipient
         :param email: Email address of the recipient
-        :return:
+        :return: Response
         """
-        data = {"name": name}
+        data = {'name': name, 'id_or_code': id_or_code}
         data.update({"email": email}) if email else ...
         return await self.put(url=self.url(f"{id_or_code}"), json=data)
 
@@ -71,6 +73,7 @@ class TransferRecipient(Base):
         """
         Deletes a transfer recipient (sets the transfer recipient to inactive)
         :param id_or_code: Transfer Recipient
-        :return:
+        :return: Response
         """
-        return await self.delete(url=self.url(f"{id_or_code}"))
+        data = {'id_or_code': id_or_code}
+        return await self.delete(url=self.url(f"{id_or_code}"), json=data)

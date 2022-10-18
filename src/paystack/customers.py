@@ -8,7 +8,6 @@ class Customers(Base):
     """
     The Customers API allows you create and manage customers on your integration.
     """
-
     def __init__(self):
         super().__init__()
         url = "/customer/{}"
@@ -23,7 +22,7 @@ class Customers(Base):
         :param kwargs: Optional params as kwargs
         :return: Response
         """
-        data = kwargs | {'email': email, 'last_name': last_name, 'first_name': first_name}
+        data = {'email': email, 'last_name': last_name, 'first_name': first_name, **kwargs}
         return await self.post(url=self.url(""), json=data)
 
     async def list(self, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
@@ -44,22 +43,23 @@ class Customers(Base):
         :param email_or_code: An email or customer code for the customer you want to fetch
         :return: Response
         """
-        return await self.get(url=self.url(f"{email_or_code}"))
+        params = {'email_or_code': email_or_code}
+        return await self.get(url=self.url(f"{email_or_code}"), params=params)
 
     async def update(self, *, code, first_name: str, last_name: str, **kwargs):
         """
         Update a customer's details on your integration
         :param last_name: Customer's last name
         :param first_name: Customer's first name
-        :param code:
+        :param code: Customer's code
         :param kwargs:
         :return: Response
         """
-        data = kwargs | {'last_name': last_name, 'first_name': first_name}
+        data = {'code': code, 'last_name': last_name, 'first_name': first_name, **kwargs}
         return await self.put(url=self.url(f"{code}"), json=data)
 
-    async def validate(self, *, code: str, last_name: str, first_name: str, type: str, value: str, country: str, bvn: str, bank_code: str,
-                                account_number: str, **kwargs):
+    async def validate(self, *, code: str, last_name: str, first_name: str, type: str, value: str, country: str,
+                                bvn: str, bank_code: str, account_number: str, **kwargs):
         """
         Validate a customer's identity
         :param code: customer_identity code
@@ -69,21 +69,22 @@ class Customers(Base):
         :param value: Customer's identification number
         :param country: 2 letter country code of identification issuer
         :param bvn: Customer's Bank Verification Number
-        :param bank_code: You can get the list of Bank Codes by calling the List Banks endpoint. (required if type is bank_account)
+        :param bank_code: You can get the list of Bank Codes by calling the List Banks endpoint. (
+        required if type is bank_account)
         :param account_number: Customer's bank account number. (required if type is bank_account)
         :param kwargs: Optional params as keyword args
         :return: Response
         """
-        data = kwargs | {'last_name': last_name, 'first_name': first_name, 'type': type, 'value': value, 'country': country, 'bvn': bvn,
-                         'bank_code': bank_code, "account_number": account_number}
+        data = {'code': code, 'last_name': last_name, 'first_name': first_name, 'type': type, 'value': value,
+                        'country': country, 'bvn': bvn, 'bank_code': bank_code, "account_number": account_number, **kwargs}
         return await self.post(url=self.url(f"{code}/identification"), json=data)
 
     async def set_risk_action(self, *, customer: str, risk_action: Literal['default', 'deny', 'allow'] = 'default'):
         """
         Whitelist or blacklist a customer on your integration
         :param customer: Customer's code, or email address
-        :param risk_action: One of the possible risk actions [ default, allow, deny ]. allow to whitelist. deny to blacklist.
-         Customers start with a default risk action.
+        :param risk_action: One of the possible risk actions [ default, allow, deny ]. allow to whitelist.
+        deny to blacklist. Customers start with a default risk action.
         :return: Response
         """
         data = {'customer': customer, 'risk_action': risk_action}
@@ -95,4 +96,5 @@ class Customers(Base):
         :param authorization_code: Authorization code to be deactivated
         :return: Response
         """
-        return await self.post(url=self.url("deactivate_authorization"), json={'authorization_code': authorization_code})
+        data = {'authorization_code': authorization_code}
+        return await self.post(url=self.url("deactivate_authorization"), json=data)

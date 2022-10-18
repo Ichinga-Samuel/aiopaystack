@@ -18,9 +18,10 @@ class Invoice(Base):
         :param customer: Customer id or code
         :param amount: Payment request amount. It should be used when line items and tax values aren't specified.
         :param kwargs:
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url(""), json={"customer": customer, "amount": amount, **kwargs})
+        data = {"customer": customer, "amount": amount, **kwargs}
+        return await self.post(url=self.url(""), json=data)
 
     async def list(self, customer: str, status: str, currency: str, include_archive: str, from_: datetime | None = None, perPage: int = 50, page: int = 1, **kwargs):
         """
@@ -33,7 +34,7 @@ class Invoice(Base):
         :param include_archive: Show archived invoices
         :param from_: from A timestamp from which to start listing invoice e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
         :param kwargs:
-        :return:
+        :return: Response
         """
         params = {"customer": customer, "status": status, "currency": currency, "include_archive": include_archive, "perPage": perPage,
                   "page": page}
@@ -44,29 +45,32 @@ class Invoice(Base):
         """
         Get details of an invoice on your integration.
         :param id_or_code: The invoice ID or code you want to fetch
-        :return:
+        :return: Response
         """
-        return await self.get(url=self.url(f"{id_or_code}"))
+        params = {'id_or_code': id_or_code}
+        return await self.get(url=self.url(f"{id_or_code}"), params=params)
 
     async def verify(self, *, code: str):
         """
         Verify details of an invoice on your integration.
         :param code: Invoice code
-        :return:
+        :return: Response
         """
-        return await self.get(url=self.url(f"verify/{code}"))
+        params = {'code': code}
+        return await self.get(url=self.url(f"verify/{code}"), params=params)
 
     async def send_notification(self, *, code: str):
         """
         :param code: Invoice code
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url(f"notify/{code}"))
+        params = {'code': code}
+        return await self.post(url=self.url(f"notify/{code}"), params=params)
 
     async def invoice_totals(self):
         """
         Get invoice metrics for dashboard
-        :return:
+        :return: Response
         """
         return await self.get(url=self.url("totals"))
 
@@ -74,10 +78,10 @@ class Invoice(Base):
         """
         Finalize a Draft Invoice
         :param code: Invoice code
-        :return:
+        :return: Response
         """
-        
-        return await self.post(url=self.url(f"finalize/{code}"))
+        data = {'code': code}
+        return await self.post(url=self.url(f"finalize/{code}"), json=data)
 
     async def update(self, *, id_or_code: str, customer: str, amount: int, **kwargs):
         """
@@ -87,15 +91,16 @@ class Invoice(Base):
         :param amount: Payment request amount. Only useful if line items and tax values are ignored. endpoint will throw a friendly warning
          if neither is available.
         :param kwargs:
-        :return:
+        :return: Response
         """
-        
-        return await self.put(url=self.url(f"{id_or_code}"), json=kwargs)
+        data = {'id_or_code': id_or_code, 'customer': customer, 'amount': amount, **kwargs}
+        return await self.put(url=self.url(f"{id_or_code}"), json=data)
 
     async def archive(self, *, id_or_code: str):
         """
         Used to archive an invoice. Invoice will no longer be fetched on list or returned on verify.
         :param id_or_code:
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url(f"archive/{id_or_code}"))
+        data = {'id_or_code' id_or_code}
+        return await self.post(url=self.url(f"archive/{id_or_code}"), json=data)

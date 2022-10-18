@@ -30,27 +30,30 @@ class Plan(Base):
         :param perPage: Specify how many records you want to retrieve per page.
         :param page: Specify exactly what page you want to retrieve.
         :param kwargs: Keyword args to form the query params
-        :return:
+        :return: Response
         """
-        return await self.get(url=self.url(""), params={"perPage": perPage, "page": page, **kwargs})
+        params = {"perPage": perPage, "page": page, **kwargs}
+        return await self.get(url=self.url(""), params=params)
 
     async def fetch(self, *, id_or_code: str):
         """
         Get details of a plan on your integration.
         :param id_or_code: The plan ID or code you want to fetch
-        :return:
+        :return: Response
         """
-        return await self.get(url=self.url(f"{id_or_code}"))
+        params = {'id_or_code': id_or_code}
+        return await self.get(url=self.url(f"{id_or_code}"), params=params)
 
     async def update(self, *, id_or_code: str, name: str, amount: str, interval: Literal['daily', 'weekly', 'monthly', 'biannually', 'annually'],
                      **kwargs):
         """
         Update a plan details on your integration
-        :param id_or_code:
+        :param id_or_code: Plan's ID or code
         :param name: Name of plan
         :param amount: Amount should be in kobo if currency is NGN, pesewas, if currency is GHS, and cents, if currency is ZAR
         :param interval: Interval in words. Valid intervals are: daily, weekly, monthly,biannually, annually.
         :param kwargs: Optional keyword args to form the body of the request
-        :return:
+        :return: Response
         """
-        return await self.put(url=self.url(f"{id_or_code}"), json={"name": name, 'amount': amount, 'interval': interval, **kwargs})
+        data = {'id_or_code': id_or_code, 'name': name, 'amount': amount, 'interval': interval, **kwargs}
+        return await self.put(url=self.url(f"{id_or_code}"), json=data)

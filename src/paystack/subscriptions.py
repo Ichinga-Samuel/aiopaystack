@@ -19,7 +19,7 @@ class Subscriptions(Base):
         :param authorization: If customer has multiple authorizations, you can set the desired authorization you wish to use for this subscription
          here. If this is not supplied, the customer's most recent authorization would be used
         :param start_date: Set the date for the first debit. (ISO 8601 format) e.g. 2017-05-16T00:30:13+01:00
-        :return:
+        :return: Response
         """
         data = {'customer': customer, 'plan': plan, 'authorization': authorization}
         data.update(start_date=start_date) if start_date else ...
@@ -41,8 +41,9 @@ class Subscriptions(Base):
         """
         Get details of a subscription on your integration.
         :param id_or_code: The subscription ID or code you want to fetch
-        :return:
+        :return: Response
         """
+        params = {'id_or_code': id_or_code}
         return await self.get(url=self.url(f"{id_or_code}"))
 
     async def enable(self, code: str, token: str):
@@ -50,32 +51,35 @@ class Subscriptions(Base):
         Enable a subscription on your integration
         :param code: Subscription code
         :param token: Email token
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url("enable"), json={'code': code, 'token': token})
+        data = {'code': code, 'token': token}
+        return await self.post(url=self.url("enable"), json=data)
 
     async def disable(self, *, code: str, token: str):
         """
         Disable a subscription on your integration
         :param code: Subscription code
         :param token: Email token
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url("disable"), json={'code': code, 'token': token})
+        data = {'code': code, 'token': token}
+        return await self.post(url=self.url("disable"), json=data)
 
     async def generate_update_subscription_link(self, *, code):
         """
         Generate a link for updating the card on a subscription
         :param code: Subscription code
-        :return:
+        :return: Response
         """
-        
-        return await self.get(url=self.url(f"{code}/manage/link"))
+        params = {'code': code}
+        return await self.get(url=self.url(f"{code}/manage/link"), params=params)
 
     async def send_update_subscription_link(self, *, code):
         """
         Email a customer a link for updating the card on their subscription
-        :param code:
-        :return:
+        :param code: Subscription code
+        :return: Response
         """
-        return await self.post(url=self.url(f"{code}/manage/email"))
+        data = {'code': code}
+        return await self.post(url=self.url(f"{code}/manage/email"), json=data)

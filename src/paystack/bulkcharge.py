@@ -14,10 +14,10 @@ class BulkCharge(Base):
 
     async def initiate(self, *, charges: list[dict]):
         """
-        Send an array of objects with authorization codes and amount (in kobo if currency is NGN, pesewas, if currency is GHS, and cents,
-         if currency is ZAR ) so we can process transactions as a batch.
+        Send an array of objects with authorization codes and amount (in kobo if currency is NGN, pesewas,
+        if currency is GHS, and cents, if currency is ZAR ) so we can process transactions as a batch.
         :param charges: A list of charge object. Each object consists of an authorization, amount and reference
-        :return: 
+        :return: Response
         """
         return await self.post(url=self.url(""), json=charges)
 
@@ -28,7 +28,7 @@ class BulkCharge(Base):
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param from_: A timestamp from which to start listing batches e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
         :param to: A timestamp at which to stop listing batches e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
-        :return:
+        :return: Response
         """
         params = {'perPage': perPage, 'page': page} | {key: value for key, value in (('from', from_), ('to', to)) if value}
         return await self.get(url=self.url(""), params=params)
@@ -38,7 +38,7 @@ class BulkCharge(Base):
         This endpoint retrieves a specific batch code. It also returns useful information on its progress by way of the total_charges
          and pending_charges attributes.
         :param id_or_code: An ID or code for the charge whose batches you want to retrieve.
-        :return:
+        :return: Response
         """
         return await self.get(url=self.url(f"{id_or_code}"))
 
@@ -52,6 +52,7 @@ class BulkCharge(Base):
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param from_: A timestamp from which to start listing charges e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
         :param to: A timestamp at which to stop listing charges e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
+        :return: Response
         """
         params = {'perPage': perPage, 'page': page} | {key: value for key, value in (('from', from_), ('to', to)) if value}
         return await self.get(url=self.url(f"{id_or_code}/charges"), params=params)
@@ -60,7 +61,7 @@ class BulkCharge(Base):
         """
         Use this endpoint to pause processing a batch
         :param batch_code: The batch code for the bulk charge you want to pause
-        :return:
+        :return: Response
         """
         await self.get(url=self.url(f"pause/{batch_code}"))
 
@@ -68,6 +69,6 @@ class BulkCharge(Base):
         """
         Use this endpoint to resume processing a batch
         :param batch_code: The batch code for the bulk charge you want to resume
-        :return:
+        :return: Response
         """
         await self.get(url=self.url(f"resume/{batch_code}"))

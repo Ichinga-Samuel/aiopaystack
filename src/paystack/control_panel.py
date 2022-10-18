@@ -13,7 +13,7 @@ class ControlPanel(Base):
     async def fetch_payment_session_timeout(self):
         """
         Fetch the payment session timeout on your integration
-        :return:
+        :return: Response
         """
         return await self.get(url=self.url("payment_session_timeout"))
 
@@ -21,6 +21,7 @@ class ControlPanel(Base):
         """
         Update the payment session timeout on your integration
         :param timeout: Time before stopping session (in seconds). Set to 0 to cancel session timeouts
-        :return:
+        :return: Response
         """
-        return await self.put(url=self.url("payment_session_timeout"), json={'timeout': timeout})
+        data = {'timeout': timeout'}
+        return await self.put(url=self.url("payment_session_timeout"), json=data)

@@ -19,45 +19,51 @@ class Charge(Base):
         :param email: Customer's email address
         :param amount: Amount should be in kobo if currency is NGN, pesewas, if currency is GHS, and cents, if currency is ZAR
         :param kwargs:
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url(""), json={'email': email, 'amount': amount, **kwargs})
+
+        data = {'email': email, 'amount': amount, **kwargs}
+        return await self.post(url=self.url(""), json=data)
 
     async def submit_pin(self, *, pin: str, reference: str):
         """
         Submit PIN to continue a charge
         :param pin: PIN submitted by user
         :param reference: Reference for transaction that requested pin
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url("submit_pin"), json={'pin': pin, 'reference': reference})
+        data = {'pin': pin, 'reference': reference}
+        return await self.post(url=self.url("submit_pin"), json=data)
 
     async def submit_otp(self, *, otp: str, reference: str):
         """
         Submit OTP to complete a charge
         :param otp: OTP submitted by user
         :param reference: Reference for ongoing transaction
-        :return:
+        :return: Response
         """
-        return await self.post(url=self.url("submit_otp"), json={'otp': otp, 'reference': reference})
+        data = {'otp': otp, 'reference': reference}
+        return await self.post(url=self.url("submit_otp"), json=data)
 
     async def submit_phone(self, *, phone: str, reference: str):
         """
         Submit Phone when requested
-        :param phone:
-        :param reference:
-        :return:
+        :param phone: Phone submitted by user
+        :param reference: Reference for ongoing transaction
+        :return: Response
         """
-        return await self.post(url=self.url("submit_phone"), json={'phone': phone, 'reference': reference})
+        data = {'phone': phone, 'reference': reference}
+        return await self.post(url=self.url("submit_phone"), json=data)
 
     async def submit_birthday(self, *, birthday: date, reference: str):
         """
         Submit Birthday when requested
         :param birthday: Birthday submitted by user e.g. 2016-09-21
-        :param reference:
-        :return:
+        :param reference: Reference for ongoing transaction
+        :return: Response
         """
-        return await self.post(url=self.url("submit_birthday"), json={'birthday': birthday, 'reference': reference})
+        data = {'birthday': birthday, 'reference': reference}
+        return await self.post(url=self.url("submit_birthday"), json=data)
 
     async def submit_address(self, *, address: str, reference: str, city: str, state: str, zipcode: str):
         """
@@ -67,7 +73,7 @@ class Charge(Base):
         :param city: City submitted by user
         :param state: State submitted by user
         :param zipcode: Zipcode submitted by user
-        :return:
+        :return: Response
         """
         data = {'address': address, 'reference': reference, 'city': city, 'state': state, 'zipcode': zipcode}
         return await self.post(url=self.url("submit_address"), json=data)
@@ -76,7 +82,7 @@ class Charge(Base):
         """
         Check Pending Charge
         :param reference: The reference to check
-        :return:
+        :return: Response
         """
-
-        return await self.get(url=self.url(f"{reference}"))
+        params = {'reference': reference}
+        return await self.get(url=self.url(f"{reference}"), params=params)

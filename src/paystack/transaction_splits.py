@@ -6,7 +6,8 @@ from .base import Base
 
 class TransactionSplits(Base):
     """
-    The Transaction Splits API enables merchants split the settlement for a transaction across their payout account, and one or more Subaccounts.
+    The Transaction Splits API enables merchants split the settlement for a transaction across their payout account,
+    and one or more Subaccounts.
     """
     def __init__(self):
         super().__init__()
@@ -16,11 +17,11 @@ class TransactionSplits(Base):
     async def create(self, *, name: str, type: Literal['percentage', 'flat'], currency: Literal['NGN', 'GHS', 'ZAR', 'USD'],
                            subaccounts: list[dict], bearer_type: Literal['subaccount', 'account', 'all-proportional', 'all'], bearer_subaccount: str):
         """
-        
+        Create a split payment on your integration
         :param name: Name of the transaction split
         :param type: The type of transaction split you want to create. You can use one of the following: percentage | flat
         :param currency: Any of NGN, GHS, ZAR, or USD
-        :param subaccounts: A list of object containing subaccount code and number of shares: [{subaccount: ‘ACT_xxxxxxxxxx’, share: xxx},{...}]
+        :param subaccounts: A list of object containing subaccount code and number of shares:[{subaccount: ‘ACT_xxxxxxxxxx’, share: xxx},{...}]
         :param bearer_type: Any of subaccount | account | all-proportional | all
         :param bearer_subaccount: Subaccount code
         :return: Response
@@ -38,7 +39,7 @@ class TransactionSplits(Base):
         :param kwargs: Optional keyword query parameters as keyword args
         :return: Response
         """
-        params = {key: value for key, value in (('name', name), ('active', active), ('from', from_)) if value} | kwargs
+        params = {key: value for key, value in (('name', name), ('active', active), ('from', from_)), **kwargs if value}
         return await self.get(url=self.url(''), params=params)
 
     async def search(self, name: str, active: bool, from_: datetime | None = None, **kwargs):
@@ -50,7 +51,7 @@ class TransactionSplits(Base):
         :param kwargs: Optional keyword query parameters as keyword args
         :return: Response
         """
-        params = kwargs | {key: value for key, value in (('name', name), ('active', active), ('from', from_)) if value}
+        params = {key: value for key, value in (('name', name), ('active', active), ('from', from_))*, **kwargs if value}
         return await self.get(url=self.url(''), params=params)
 
     async def fetch(self, *, id: str):
@@ -59,7 +60,8 @@ class TransactionSplits(Base):
         :param id: The id of the split
         :return: Response
         """
-        return await self.get(url=self.url(f"{id}"))
+        params = {'id': id}
+        return await self.get(url=self.url(f"{id}"), params=params)
 
     async def update(self, *, id: str, name: str, active: bool, **kwargs):
         """
@@ -68,9 +70,9 @@ class TransactionSplits(Base):
         :param name: The name of the split
         :param active: Any of true or false
         :param kwargs:
-        :return:
+        :return: Response
         """
-        data = kwargs | {'name': name, active: 'active'}
+        data = {'name': name, active: 'active', **kwargs}
         return await self.put(url=self.url(f"{id}"), json=data)
 
     async def add_split_subaccount(self, *, id: str, subaccount: str, share: int):
@@ -81,7 +83,8 @@ class TransactionSplits(Base):
         :param share: This is the transaction share for the subaccount
         :return:
         """
-        return await self.post(url=self.url(f"{id}/subaccount/add"), json={'id': id, 'subaccount': subaccount, 'share': share})
+        data = {'id': id, 'subaccount': subaccount, 'share': share}
+        return await self.post(url=self.url(f"{id}/subaccount/add"), json=data)
 
     async def remove_subaccount_from_split(self, *, id: str, subaccount: str):
         """
@@ -90,4 +93,5 @@ class TransactionSplits(Base):
         :param subaccount: This is the sub account code
         :return:
         """
-        return await self.post(url=self.url(f"{id}/subaccount/remove"), json={"subaccount": subaccount})
+        data = {'id': id, 'subaccount': subaccount}
+        return await self.post(url=self.url(f"{id}/subaccount/remove"), json=data)
