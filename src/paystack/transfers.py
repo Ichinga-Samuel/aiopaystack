@@ -20,7 +20,7 @@ class Transfers(Base):
         :param source: Where should we transfer from? Only balance for now
         :param amount: Amount to transfer in kobo if currency is NGN and pesewas if currency is GHS.
         :param recipient: Code for transfer recipient
-        :param kwargs:
+        :param kwargs: Optional Parameters
         :return: Response
         """
         data = {'source': source, 'amount': amount, "recipient": recipient, **kwargs}
@@ -36,17 +36,18 @@ class Transfers(Base):
         data = {'otp': otp, 'transfer_code': transfer_code}
         return await self.post(url=self.url("finalize_transfer"), json=data)
 
-    async def initiate_bulk_transfer(self, *, source: str, transfers: list[dict]):
+    async def initiate_bulk_transfer(self, *, source: str, transfers: list[dict['amount', 'recipient', 'reference']], **kwargs):
         """
         You need to disable the Transfers OTP requirement to use this endpoint.
         :param source: Where should we transfer from? Only balance for now
         :param transfers: A list of transfer object. Each object should contain
         :return: Response
         """
-        data = {'source': source, 'transfers': transfers}
+        data = {'source': source, 'transfers': transfers, **kwargs}
         return await self.post(url=self.url("bulk"), json=data)
 
-    async def list(self, *, customer: str, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, *, customer: str, perPage: int = 50, page: int = 1, from_: datetime | None | str = None, to: datetime | None | str = None,
+                   **kwargs):
         """
         List the transfers made on your integration.
         :param customer: Filter by customer ID
@@ -56,7 +57,8 @@ class Transfers(Base):
         :param to: A timestamp at which to stop listing transfer e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
         :return: Response
         """
-        params = {key: value for key, value in (('customer', customer), ('perPage', perPage), ('page', page), ('from', from_), ('to', to))}
+        params = {key: value for key, value in (('customer', customer), ('perPage', perPage), ('page', page), ('from', from_), ('to', to),
+                                                *kwargs.items())}
         return await self.get(url=self.url(""), params=params)
 
     async def fetch(self, *, id_or_code: str):

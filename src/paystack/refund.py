@@ -29,7 +29,7 @@ class Refund(Base):
         :param kwargs:
         :return: Response
         """
-        params = {'reference': reference, 'currency':currency, **kwargs}
+        params = {'reference': reference, 'currency': currency, **kwargs}
         return await self.get(url=self.url(""), params=params)
 
     async def fetch(self, *, reference: str):
@@ -38,5 +38,4 @@ class Refund(Base):
         :param reference: Identifier for transaction to be refunded
         :return: Response
         """
-        params = {'reference': reference}
         return await self.get(url=self.url(f"{reference}"))

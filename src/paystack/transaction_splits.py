@@ -30,7 +30,7 @@ class TransactionSplits(Base):
                 'bearer_subaccount': bearer_subaccount}
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, name: str, active: bool, from_: datetime | None = None, **kwargs):
+    async def list(self, name: str, active: bool, from_: datetime | None | str = None, **kwargs):
         """
         List/search for the transaction splits available on your integration.
         :param name: The name of the split
@@ -42,7 +42,7 @@ class TransactionSplits(Base):
         params = {key: value for key, value in (('name', name), ('active', active), ('from', from_), *kwargs.items()) if value}
         return await self.get(url=self.url(''), params=params)
 
-    async def search(self, name: str, active: bool, from_: datetime | None = None, **kwargs):
+    async def search(self, name: str, active: bool, from_: datetime | None | str = None, **kwargs):
         """
         Does the exact same thing as list
         :param name: The name of the split
@@ -69,10 +69,10 @@ class TransactionSplits(Base):
         :param id: Split ID
         :param name: The name of the split
         :param active: Any of true or false
-        :param kwargs:
+        :param kwargs: Optional Parameters
         :return: Response
         """
-        data = {'name': name, active: 'active', **kwargs}
+        data = {'name': name, active: active, **kwargs}
         return await self.put(url=self.url(f"{id}"), json=data)
 
     async def add_split_subaccount(self, *, id: str, subaccount: str, share: int):

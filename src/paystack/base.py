@@ -29,10 +29,7 @@ class Base:
 
     async def request(self, *, method: str, url: str, **kwargs):
         res = await self._client.request(method, url, **kwargs)
-        response = res.json()
-        response['status_code'] = res.status_code
-        response.setdefault('data', {})
-        return response
+        return self.set_response(res)
 
     async def post(self, *, url, **kwargs) -> Response:
         if self.session:
@@ -40,10 +37,7 @@ class Base:
 
         async with self.client as client:
             res = await client.post(url, headers={"Content-type": "application/json"}, **kwargs)
-            response = res.json()
-            response['status_code'] = res.status_code
-            response.setdefault('data', {})
-            return response
+            return self.set_response(res)
 
     async def get(self, *, url, **kwargs) -> Response:
         if self.session:
@@ -51,10 +45,7 @@ class Base:
 
         async with self.client as client:
             res = await client.get(url, **kwargs)
-            response = res.json()
-            response['status_code'] = res.status_code
-            response.setdefault('data', {})
-            return response
+            return self.set_response(res)
 
     async def delete(self, *, url, **kwargs):
         if self.session:
@@ -62,10 +53,7 @@ class Base:
 
         async with self.client as client:
             res = await client.delete(url, **kwargs)
-            response = res.json()
-            response['status_code'] = res.status_code
-            response.setdefault('data', {})
-            return response
+            return self.set_response(res)
 
     async def put(self, *, url, **kwargs):
         if self.session:
@@ -73,7 +61,12 @@ class Base:
 
         async with self.client as client:
             res = await client.put(url, headers={"Content-type": "application/json"}, **kwargs)
-            response = res.json()
-            response['status_code'] = res.status_code
-            response.setdefault('data', {})
-            return response
+            return self.set_response(res)
+
+    def set_response(self, res) -> Response:
+        response = res.json()
+        response['status_code'] = res.status_code
+        response.setdefault('message', "")
+        response.setdefault('status', res.status_code == 200)
+        response.setdefault('data', {})
+        return response

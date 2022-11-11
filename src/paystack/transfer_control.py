@@ -10,7 +10,7 @@ class TransferControl(Base):
     def __init__(self):
         super().__init__()
         url = "/{}"
-        self.url = url.format('') 
+        self.url = url.format
 
     async def check_balance(self):
         """

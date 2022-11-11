@@ -59,6 +59,7 @@ async def transaction_id(verify_transaction):
     res = await verify_transaction
     return res['data']['id']
 
+
 #
 # @pytest.fixture(scope='session')
 # async def charge_authorization(create_charge, init):
@@ -91,13 +92,59 @@ def validate_customer():
 @pytest.fixture(scope="session")
 def charges():
     return [
-      {"authorization": "AUTH_ncx8hews93", "amount": 2500, "reference": "dam1266638dhhd"},
-      {"authorization": "AUTH_xfuz7dy4b9", "amount": 1500, "reference": "dam1266638dhhe"}
+        {"authorization": "AUTH_ncx8hews93", "amount": 2500, "reference": "dam1266638dhhd"},
+        {"authorization": "AUTH_xfuz7dy4b9", "amount": 1500, "reference": "dam1266638dhhe"}
     ]
 
 
-# @pytest.fixture(scope='session')
-# async def create_charge(init):
-#     res = await Charge().create(**init)
-#     print(res)
-#     return res
+@pytest.fixture(scope="session")
+def validate_account():
+    return {
+        "bank_code": "632005",
+        "country_code": "ZA",
+        "account_number": "0123456789",
+        "account_name": "Ann Bron",
+        "account_type": "personal",
+        "document_type": "identityNumber",
+        "document_number": "1234567890123"
+    }
+
+
+@pytest.fixture(scope="session")
+def initiate_transfer():
+    return {"source": "balance", "reason": "Calm down", "amount": 3794800, "recipient": "RCP_gx2wn530m0i3w3m"}
+
+
+@pytest.fixture(scope="session")
+def bulk_transfer():
+    return {"currency": "NGN",
+            "source": "balance",
+            "transfers": [{
+                "amount": 50000,
+                "recipient": "RCP_db342dvqvz9qcrn",
+                "reference": "ref_943899312"
+            },
+                {
+                    "amount": 50000,
+                    "recipient": "RCP_db342dvqvz9qcrn",
+                    "reference": "ref_943889313"
+                }]
+            }
+
+
+@pytest.fixture(scope="session")
+def splits():
+    return {"name": "Percentage Split",
+            "type": "percentage",
+            "currency": "NGN",
+            "subaccounts": [{
+                "subaccount": "ACCT_z3x6z3nbo14xsil",
+                "share": 20
+            },
+                {
+                    "subaccount": "ACCT_pwwualwty4nhq9d",
+                    "share": 30
+                }],
+            "bearer_type": "subaccount",
+            "bearer_subaccount": "ACCT_hdl8abxl8drhrl3"
+            }

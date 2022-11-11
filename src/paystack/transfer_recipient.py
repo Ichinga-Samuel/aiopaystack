@@ -10,7 +10,7 @@ class TransferRecipient(Base):
     """
     def __init__(self):
         super().__init__()
-        url = "/transferrecipient/"
+        url = "/transferrecipient/{}"
         self.url = url.format
 
     async def create(self, type: Literal['nuban', 'mobile_money', 'basa'], name: str, account_number: str = "", bank_code: str = "", **kwargs):
@@ -20,7 +20,7 @@ class TransferRecipient(Base):
         :param name: A name for the recipient
         :param account_number: Required if type is nuban or basa
         :param bank_code: Required if type is nuban or basa. You can get the list of Bank Codes by calling the List Banks endpoint.
-        :param kwargs:
+        :param kwargs: Optional Parameters
         :return: Response
         """
         data = {key: value for key, value in (('type', type), ('name', name), ('account_number', account_number), ('bank_code', bank_code),
@@ -37,7 +37,7 @@ class TransferRecipient(Base):
         data = {'batch': batch}
         return await self.post(url=self.url("bulk"), json=data)
 
-    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None | str = None, to: datetime | None | str = None):
         """
         List transfer recipients available on your integration
         :param page:    Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
@@ -76,5 +76,4 @@ class TransferRecipient(Base):
         :param id_or_code: Transfer Recipient
         :return: Response
         """
-        data = {'id_or_code': id_or_code}
-        return await self.delete(url=self.url(f"{id_or_code}"), json=data)
+        return await self.delete(url=self.url(f"{id_or_code}"))
