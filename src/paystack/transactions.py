@@ -29,7 +29,7 @@ class Transactions(Base):
         :param reference: The transaction reference used to initiate the transaction
         :return: json data from paystack API
         """
-        params = {'reference'; reference}
+        params = {'reference': reference}
         return await self.get(url=self.url(f'verify/{reference}'), params=params)
 
     async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, **kwargs):
@@ -51,8 +51,7 @@ class Transactions(Base):
         :param id: id of a single transaction
         :return: json data from paystack API
         """
-        params = {'id':id}
-        return await self.get(url=self.url(f"/{id}"), params=params)
+        return await self.get(url=self.url(f"{id}"))
 
     async def charge_authorization(self, *, amount: str, email: str, authorization_code: str,  **kwargs):
         """
@@ -100,10 +99,10 @@ class Transactions(Base):
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
         :param to: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param from_: A timestamp from which to start listing transaction e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
-        :return: json data from paystack API
+        :return: Response
         """
         params = {key: value for key, value in (('from', from_), ('to', to), ('perPage', perPage), ('page', page)) if value}
-        return await self.get(url=self.url(f"totals/{perPage}/{page}"), params=params)
+        return await self.get(url=self.url(f"totals/"), params=params)
 
     async def export_transactions(self, perPage: int = 50, page: int = 1, **kwargs):
         """
@@ -111,7 +110,7 @@ class Transactions(Base):
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param kwargs:
-        :return: Resonse
+        :return: Response
         """
         params = {'perPage': perPage, 'page': page, **kwargs}
         return await self.get(url=self.url("export"), params=params)

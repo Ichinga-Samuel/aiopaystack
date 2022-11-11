@@ -11,7 +11,6 @@ class Refund(Base):
         url = "/refund/{}"
         self.url = url.format
 
-
     async def create(self, *, transaction: str, **kwargs):
         """
         Initiate a refund on your integration

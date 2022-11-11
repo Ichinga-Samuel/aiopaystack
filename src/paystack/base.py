@@ -11,7 +11,7 @@ class Base:
     def __init__(self):
         self.base = Paystack()
         self.session = False
-        self._client: AsyncClient or None = None
+        self._client: AsyncClient | None = None
 
     @property
     def client(self):

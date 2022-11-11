@@ -23,5 +23,5 @@ class ControlPanel(Base):
         :param timeout: Time before stopping session (in seconds). Set to 0 to cancel session timeouts
         :return: Response
         """
-        data = {'timeout': timeout'}
+        data = {'timeout': timeout}
         return await self.put(url=self.url("payment_session_timeout"), json=data)

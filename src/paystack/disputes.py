@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Literal
 
 from .base import Base
 
@@ -10,7 +11,7 @@ class Disputes(Base):
         url = "/dispute/{}"
         self.url = url.format
 
-    async def list(self, *, from_: date, to: date, **kwargs):
+    async def list(self, *, from_: date | str, to: date | str, **kwargs):
         """
         List disputes filed against you
         :param from_: A timestamp from which to start listing dispute e.g. 2016-09-21
@@ -27,7 +28,7 @@ class Disputes(Base):
         :param id: The dispute ID you want to fetch
         :return: Response
         """
-        params= {'id': id}
+        params = {'id': id}
         return await self.get(url=self.url(f"{id}"), params=params)
 
     async def list_transaction_disputes(self, *, id):
@@ -36,8 +37,7 @@ class Disputes(Base):
         :param id: The transaction ID you want to fetch
         :return: Response
         """
-        params = {'id': id}
-        return await self.get(url=self.url(f"transaction/{id}"), params=params )
+        return await self.get(url=self.url(f"transaction/{id}"))
 
     async def update(self, *, id: str, refund_amount: int, **kwargs):
         """
@@ -51,9 +51,10 @@ class Disputes(Base):
         data = {'id': id, 'refund_amount': refund_amount, **kwargs}
         return await self.put(url=self.url(f"{id}"), json=data)
 
-    async def add_evidence(self, *, customer_email: str, customer_name: str, customer_phone: str, service_details: str, **kwargs):
+    async def add_evidence(self, *, id: str, customer_email: str, customer_name: str, customer_phone: str, service_details: str, **kwargs):
         """
         Provide evidence for a dispute
+        :param id: dispute id
         :param customer_email: Customer Email
         :param customer_name: Customer Name
         :param customer_phone: Customer Phone
@@ -72,10 +73,11 @@ class Disputes(Base):
         :param upload_filename: The file name, with its extension, that you want to upload. e.g filename.pdf
         :return: Response
         """
-        params = {'id': id, 'upload_filename': upload_filename}
+        params = {'upload_filename': upload_filename}
         return await self.get(url=self.url(f"{id}/upload_url"), params=params)
 
-    async def resolve(self, *, id: str, resolution: str, message: str, refund_amount: int, uploaded_filename: str, **kwargs):
+    async def resolve(self, *, id: str, resolution: Literal['merchant-accepted', 'declined'], message: str, refund_amount: int,
+                      uploaded_filename: str, **kwargs):
         """
         Resolve a dispute on your integration
         :param id: Dispute Id
@@ -86,10 +88,10 @@ class Disputes(Base):
         :param kwargs:
         :return: Response
         """
-        data = {'id': id, 'resolution': resolution, 'message': message, 'refund_amount': refund_amount, 'uploaded_filename': uploaded_filename, **kwargs}
+        data = {'resolution': resolution, 'message': message, 'refund_amount': refund_amount, 'uploaded_filename': uploaded_filename, **kwargs}
         return await self.put(url=self.url(f"{id}/resolve"), json=data)
 
-    async def export(self, *, from_: date, to: date, **kwargs):
+    async def export(self, *, from_: date | str, to: date | str, **kwargs):
         """
         Export disputes available on your integration
         :param from_: A timestamp from which to start listing dispute e.g. 2016-09-21

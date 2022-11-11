@@ -65,8 +65,7 @@ class Transfers(Base):
         :param id_or_code: The transfer ID or code you want to fetch
         :return: Response
         """
-        params {'id_or_code': id_or_code}
-        return await self.get(url=self.url(f"{id_or_code}"), params=params)
+        return await self.get(url=self.url(f"{id_or_code}"))
 
     async def verify(self, *, reference: str):
         """
@@ -74,5 +73,4 @@ class Transfers(Base):
         :param reference: Verify the status of a transfer on your integration.
         :return: Response
         """
-        params = {'reference': reference}
-        return await self.get(url=self.url(f"verify/{reference}"), params=params)
+        return await self.get(url=self.url(f"verify/{reference}"))

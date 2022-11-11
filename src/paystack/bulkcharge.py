@@ -12,7 +12,7 @@ class BulkCharge(Base):
         url = "/bulkcharge/"
         self.url = url.format
 
-    async def initiate(self, *, charges: list[dict]):
+    async def initiate(self, charges: list[dict]):
         """
         Send an array of objects with authorization codes and amount (in kobo if currency is NGN, pesewas,
         if currency is GHS, and cents, if currency is ZAR ) so we can process transactions as a batch.
@@ -21,7 +21,7 @@ class BulkCharge(Base):
         """
         return await self.post(url=self.url(""), json=charges)
 
-    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None | str = None, to: datetime | None | str = None):
         """
         This lists all bulk charge batches created by the integration. Statuses can be active, paused, or complete.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
@@ -42,11 +42,11 @@ class BulkCharge(Base):
         """
         return await self.get(url=self.url(f"{id_or_code}"))
 
-    async def fetch_charges_in_a_batch(self, *, id_or_code: str, perPage: int = 50, page: int = 1, from_: datetime | None = None,
-                                       to: datetime | None = None):
+    async def fetch_charges_in_a_batch(self, *, id_or_code: str, perPage: int = 50, page: int = 1, from_: datetime | None | str = None,
+                                       to: datetime | None | str = None):
         """
         This endpoint retrieves the charges associated with a specified batch code. Pagination parameters are available.
-         You can also filter by status. Charge statuses can be pending, success or failed.
+        You can also filter by status. Charge statuses can be pending, success or failed.
         :param id_or_code: An ID or code for the batch whose charges you want to retrieve.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
@@ -63,7 +63,7 @@ class BulkCharge(Base):
         :param batch_code: The batch code for the bulk charge you want to pause
         :return: Response
         """
-        await self.get(url=self.url(f"pause/{batch_code}"))
+        return await self.get(url=self.url(f"pause/{batch_code}"))
 
     async def resume_bulk_charge(self, *, batch_code: str):
         """
@@ -71,4 +71,4 @@ class BulkCharge(Base):
         :param batch_code: The batch code for the bulk charge you want to resume
         :return: Response
         """
-        await self.get(url=self.url(f"resume/{batch_code}"))
+        return await self.get(url=self.url(f"resume/{batch_code}"))

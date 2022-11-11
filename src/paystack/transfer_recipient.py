@@ -23,7 +23,8 @@ class TransferRecipient(Base):
         :param kwargs:
         :return: Response
         """
-        data = {key: value for key, value in (('type', type), ('name', name), ('account_number', account_number), ('bank_code', bank_code)), **kwargs if value}
+        data = {key: value for key, value in (('type', type), ('name', name), ('account_number', account_number), ('bank_code', bank_code),
+                                              *kwargs.items()) if value}
         return await self.post(url=self.url(""), json=data)
 
     async def bulk_create(self, *, batch: list[dict]):

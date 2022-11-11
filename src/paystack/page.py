@@ -1,26 +1,30 @@
 from datetime import datetime
+from typing import List
+
 from .base import Base
+
 
 class PaymentPages(Base):
     """
     The Payment Pages API provides a quick and secure way to collect payment for products.
     """
+
     def __init__(self):
         super().__init__()
         url = '/page/{}'
         self.url = url.format
 
     async def create(self, *, name: str, **kwargs):
-       """
-       Create a payment page on your integration
-       :param name: Name of page
-       :param kwargs:
-       :return: Response
-       """
-       data = {'name': name, **kwargs}
-       return await self.post(url=self.url(""), json=data)
+        """
+        Create a payment page on your integration
+        :param name: Name of page
+        :param kwargs:
+        :return: Response
+        """
+        data = {'name': name, **kwargs}
+        return await self.post(url=self.url(""), json=data)
 
-    async def list(self, *, perPage: int = 50, page: int = 1,  from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
         """
         List payment pages available on your integration.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
@@ -63,7 +67,7 @@ class PaymentPages(Base):
         params = {'slug': slug}
         return await self.get(url=self.url(f"check_slug_availability/{slug}"), params=params)
 
-    async def add_products(self, *, id: int, product: list[dict]):
+    async def add_products(self, *, id: int, product: List[dict]):
         """
         Add products to a payment page
         :param id: Id of the payment page

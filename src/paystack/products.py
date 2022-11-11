@@ -25,7 +25,7 @@ class Products(Base):
         data = {'name': name, 'description': description, 'price': price, 'currency': currency, **kwargs}
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, perPage: int = 50, page: int = 1, from_: datetime | None | str = None, to: datetime | None | str = None):
         """
         List products available on your integration.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
@@ -43,8 +43,7 @@ class Products(Base):
         :param id: The product ID you want to fetch
         :return: Response
         """
-        params = {'id': id}
-        return await self.get(url=self.url(f"{id}"), params=params)
+        return await self.get(url=self.url(f"{id}"))
 
     async def update(self, *, id: str, name: str, description: str, price: int, currency: str, **kwargs):
         """
@@ -57,5 +56,5 @@ class Products(Base):
         :param kwargs:
         :return: Response
         """
-        data = {'id': id, 'name': name, 'description': description, 'price': price, 'currency': currency, **kwargs}
+        data = {'name': name, 'description': description, 'price': price, 'currency': currency, **kwargs}
         return await self.put(url=self.url(f"{id}"), json=data)

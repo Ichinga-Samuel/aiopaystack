@@ -99,8 +99,7 @@ class Invoice(Base):
     async def archive(self, *, id_or_code: str):
         """
         Used to archive an invoice. Invoice will no longer be fetched on list or returned on verify.
-        :param id_or_code:
+        :param id_or_code: Code of the invoice
         :return: Response
         """
-        data = {'id_or_code' id_or_code}
-        return await self.post(url=self.url(f"archive/{id_or_code}"), json=data)
+        return await self.post(url=self.url(f"archive/{id_or_code}"))

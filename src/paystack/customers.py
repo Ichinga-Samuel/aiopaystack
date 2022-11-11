@@ -8,6 +8,7 @@ class Customers(Base):
     """
     The Customers API allows you create and manage customers on your integration.
     """
+
     def __init__(self):
         super().__init__()
         url = "/customer/{}"
@@ -25,7 +26,7 @@ class Customers(Base):
         data = {'email': email, 'last_name': last_name, 'first_name': first_name, **kwargs}
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, perPage: int = 50, page: int = 1, from_: datetime | None | str = None, to: datetime | None | str = None):
         """
         List customers available on your integration
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
@@ -43,8 +44,7 @@ class Customers(Base):
         :param email_or_code: An email or customer code for the customer you want to fetch
         :return: Response
         """
-        params = {'email_or_code': email_or_code}
-        return await self.get(url=self.url(f"{email_or_code}"), params=params)
+        return await self.get(url=self.url(f"{email_or_code}"))
 
     async def update(self, *, code, first_name: str, last_name: str, **kwargs):
         """
@@ -58,8 +58,8 @@ class Customers(Base):
         data = {'code': code, 'last_name': last_name, 'first_name': first_name, **kwargs}
         return await self.put(url=self.url(f"{code}"), json=data)
 
-    async def validate(self, *, code: str, last_name: str, first_name: str, type: str, value: str, country: str,
-                                bvn: str, bank_code: str, account_number: str, **kwargs):
+    async def validate(self, *, code: str, last_name: str, first_name: str, value: str,
+                       bvn: str, bank_code: str, account_number: str, type: str = "bank_account", country: str = "NG",  **kwargs):
         """
         Validate a customer's identity
         :param code: customer_identity code
@@ -76,18 +76,19 @@ class Customers(Base):
         :return: Response
         """
         data = {'code': code, 'last_name': last_name, 'first_name': first_name, 'type': type, 'value': value,
-                        'country': country, 'bvn': bvn, 'bank_code': bank_code, "account_number": account_number, **kwargs}
+                'country': country, 'bvn': bvn, 'bank_code': bank_code, "account_number": account_number, **kwargs}
         return await self.post(url=self.url(f"{code}/identification"), json=data)
 
-    async def set_risk_action(self, *, customer: str, risk_action: Literal['default', 'deny', 'allow'] = 'default'):
+    async def set_risk_action(self, *, customer: str, email: str, risk_action: Literal['default', 'deny', 'allow'] = 'default'):
         """
         Whitelist or blacklist a customer on your integration
-        :param customer: Customer's code, or email address
+        :param email: Customer email
+        :param customer: Customer's code
         :param risk_action: One of the possible risk actions [ default, allow, deny ]. allow to whitelist.
         deny to blacklist. Customers start with a default risk action.
         :return: Response
         """
-        data = {'customer': customer, 'risk_action': risk_action}
+        data = {'customer': customer, 'risk_action': risk_action, 'email': email}
         return await self.post(url=self.url(""), json=data)
 
     async def deactivate_authorization(self, authorization_code: str):

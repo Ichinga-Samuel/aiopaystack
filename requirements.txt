@@ -1,19 +1,4 @@
--e git+https://github.com/Ichinga-Samuel/aiopaystack.git@fffb68f36947f5381d063e3c23064595e671f411#egg=aiopaystack
-anyio==3.6.1
-attrs==22.1.0
-certifi==2022.9.24
-colorama==0.4.5
-h11==0.12.0
-httpcore==0.15.0
 httpx==0.23.0
-idna==3.4
-iniconfig==1.1.1
-packaging==21.3
-pluggy==1.0.0
-py==1.11.0
-pyparsing==3.0.9
 pytest==7.1.3
 pytest-asyncio==0.19.0
-rfc3986==1.5.0
-sniffio==1.3.0
-tomli==2.0.1
+

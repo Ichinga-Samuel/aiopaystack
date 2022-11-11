@@ -10,19 +10,19 @@ class Charge(Base):
 
     def __init__(self):
         super().__init__()
-        url = "/charge/"
+        url = "/charge/{}"
         self.url = url.format
 
-    async def create(self, *, email: str, amount: str, **kwargs):
+    async def create(self, *, email: str, amount: str, birthday: str,  **kwargs):
         """
         Initiate a payment by integrating the payment channel of your choice.
         :param email: Customer's email address
         :param amount: Amount should be in kobo if currency is NGN, pesewas, if currency is GHS, and cents, if currency is ZAR
+        :param birthday:
         :param kwargs:
         :return: Response
         """
-
-        data = {'email': email, 'amount': amount, **kwargs}
+        data = {'email': email, 'amount': amount, 'birthday': birthday, **kwargs}
         return await self.post(url=self.url(""), json=data)
 
     async def submit_pin(self, *, pin: str, reference: str):
@@ -55,7 +55,7 @@ class Charge(Base):
         data = {'phone': phone, 'reference': reference}
         return await self.post(url=self.url("submit_phone"), json=data)
 
-    async def submit_birthday(self, *, birthday: date, reference: str):
+    async def submit_birthday(self, *, birthday: str, reference: str):
         """
         Submit Birthday when requested
         :param birthday: Birthday submitted by user e.g. 2016-09-21
@@ -84,5 +84,4 @@ class Charge(Base):
         :param reference: The reference to check
         :return: Response
         """
-        params = {'reference': reference}
-        return await self.get(url=self.url(f"{reference}"), params=params)
+        return await self.get(url=self.url(f"{reference}"))

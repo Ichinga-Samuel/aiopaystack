@@ -1,5 +1,6 @@
 from .base import Base
 
+
 class Miscellaneous(Base):
     """
     The Miscellaneous API are supporting APIs that can be used to provide more details to other APIs
