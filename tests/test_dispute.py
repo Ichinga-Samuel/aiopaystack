@@ -3,7 +3,7 @@ from . import BaseTest
 
 
 class TestDisputes(BaseTest):
-    async def test_dispute(self):
+    async def tests(self):
         async with Disputes() as disputes:
             res = await disputes.list(from_="2022-11-01", to="2022-11-10")
             assert res['status'] is True

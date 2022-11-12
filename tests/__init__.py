@@ -18,6 +18,9 @@ async def che():
     async with Transactions() as trans:
         res = await trans.initialize(**init)
         res = await trans.verify(reference=res['data']['reference'])
-    pp(res)
+    # res = Transactions()
+    # re = await res.initialize(**init)
+    # re = await res.verify(reference=re['data']['reference'])
+    # pp(res)
 
 # asyncio.run(che())

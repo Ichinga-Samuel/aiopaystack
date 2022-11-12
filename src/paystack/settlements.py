@@ -10,10 +10,11 @@ class Settlements(Base):
 
     def __init__(self):
         super().__init__()
-        url = "/settlement/"
+        url = "/settlement/{}"
         self.url = url.format
 
-    async def fetch(self, *, perPage: int = 50, page: int = 1, subaccount: str = 'none', from_: datetime | None = None, to: datetime | None = None):
+    async def fetch(self, *, perPage: int = 50, page: int = 1, subaccount: str = 'none', from_: datetime | None | str = None,
+                    to: datetime | None | str = None):
         """
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
@@ -27,7 +28,7 @@ class Settlements(Base):
                                                 ('to', to)) if value}
         return await self.get(url=self.url(""), params=params)
 
-    async def fetch_settlement_transactions(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def fetch_settlement_transactions(self, *, perPage: int = 50, page: int = 1, from_: datetime | None | str = None, to: datetime | None | str = None):
         """
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.

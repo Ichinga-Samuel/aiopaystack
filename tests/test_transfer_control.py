@@ -4,7 +4,7 @@ from . import BaseTest
 
 
 class TestTransferControl(BaseTest):
-    async def test(self):
+    async def tests(self):
         async with TransferControl() as transfer_control:
             res = await transfer_control.check_balance()
             assert res['status'] is True

@@ -3,7 +3,7 @@ from . import BaseTest, customer, validate_customer
 
 
 class TestCustomers(BaseTest):
-    async def test_customers(self, customer, validate_customer):
+    async def tests(self, customer, validate_customer):
         async with Customers() as customers:
             res = await customers.create(**customer)
             data = res['data']

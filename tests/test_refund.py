@@ -5,7 +5,7 @@ from . import BaseTest
 
 class TestRefund(BaseTest):
 
-    async def test_refund(self):
+    async def tests(self):
         async with Refund() as refund:
             res = await refund.create(transaction="1641")
             assert res['message'] != ""

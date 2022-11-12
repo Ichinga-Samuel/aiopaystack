@@ -18,13 +18,13 @@ class PaymentPages(Base):
         """
         Create a payment page on your integration
         :param name: Name of page
-        :param kwargs:
+        :param kwargs: Optional Parameters
         :return: Response
         """
         data = {'name': name, **kwargs}
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | str = "", to: datetime | str = ""):
         """
         List payment pages available on your integration.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
@@ -43,8 +43,7 @@ class PaymentPages(Base):
         :param id_or_slug: The page ID or slug you want to fetch
         :return: Response
         """
-        params = {'id_or_slug': id_or_slug}
-        return await self.get(url=self.url(f"{id_or_slug}"), params=params)
+        return await self.get(url=self.url(f"{id_or_slug}"))
 
     async def update(self, *, id_or_slug: str, name: str, description: str, **kwargs):
         """
@@ -55,8 +54,8 @@ class PaymentPages(Base):
         :param kwargs:
         :return: Response
         """
-        params = {'id_or_slug': id_or_slug, 'name': name, 'description': description, **kwargs}
-        return await self.get(url=self.url(f"{id_or_slug}"), params=params)
+        params = {'name': name, 'description': description, **kwargs}
+        return await self.put(url=self.url(f"{id_or_slug}"), params=params)
 
     async def is_slug_available(self, *, slug):
         """
@@ -64,15 +63,13 @@ class PaymentPages(Base):
         :param slug: URL slug to be confirmed
         :return: Response
         """
-        params = {'slug': slug}
-        return await self.get(url=self.url(f"check_slug_availability/{slug}"), params=params)
+        return await self.get(url=self.url(f"check_slug_availability/{slug}"))
 
-    async def add_products(self, *, id: int, product: List[dict]):
+    async def add_products(self, *, id: int, product: List[int]):
         """
         Add products to a payment page
         :param id: Id of the payment page
         :param product: Ids of all the products
         :return: Response
         """
-        data = {'id': id, 'product': product}
-        return await self.post(url=self.url("product"), json=data)
+        return await self.post(url=self.url(f"{id}/product"), json={'product': product})

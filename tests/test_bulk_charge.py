@@ -4,7 +4,7 @@ from . import BaseTest, charges
 
 
 class TestBulkCharge(BaseTest):
-    async def test_bulk(self, charges):
+    async def tests(self, charges):
         async with BulkCharge() as bulk_charge:
             res = await bulk_charge.initiate(charges=charges)
             data = res['data']

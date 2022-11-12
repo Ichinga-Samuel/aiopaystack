@@ -5,7 +5,7 @@ from . import BaseTest, initiate_transfer, bulk_transfer
 
 class TestTransfers(BaseTest):
 
-    async def test_transfers(self, initiate_transfer, bulk_transfer):
+    async def tests(self, initiate_transfer, bulk_transfer):
         async with Transfers() as transfers:
             res = await transfers.initiate(**initiate_transfer)
             assert res['message'] != ""

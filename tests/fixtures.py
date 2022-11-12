@@ -3,8 +3,6 @@ import random
 
 import pytest
 
-from paystack import Transactions, Charge
-
 
 class Cacheable:
     def __init__(self, func):
@@ -28,50 +26,38 @@ class Cacheable:
 
 
 @pytest.fixture(scope='session')
+def recipient():
+    return {"type": "nuban", "name": "Tolu Robert", "account_number": "0100000001", "bank_code": "063", "currency": "NGN"}
+
+
+@pytest.fixture(scope='session')
+def recipients():
+    return {"batch": [
+        {
+            "type": "nuban",
+            "name": "Habenero Mundane",
+            "account_number": "0123456789",
+            "bank_code": "033",
+            "currency": "NGN"
+        },
+        {
+            "type": "nuban",
+            "name": "Soft Merry",
+            "account_number": "9876543231",
+            "bank_code": "50211",
+            "currency": "NGN"
+        }]
+    }
+
+
+@pytest.fixture(scope='session')
 def init():
-    return {'email': "ichingasamuel@gmail.com", 'amount': "50000", "kwargs": {}}
-
-
-@pytest.fixture(scope='session')
-@Cacheable
-async def transaction_details():
-    init = {'email': "ichingasamuel@gmail.com", 'amount': "50000", "kwargs": {}}
-    async with Transactions() as trans:
-        return await trans.initialize(**init)
-
-
-@pytest.fixture(scope='session')
-async def verify_transaction(transaction_details):
-    res = await transaction_details
-    async with Transactions() as trans:
-        res = await trans.verify(reference=res['data']['reference'])
-        return res
-
-
-@pytest.fixture(scope='session')
-async def transaction_reference(transaction_details):
-    res = await transaction_details
-    return res['data']['reference']
-
-
-@pytest.fixture(scope='session')
-async def transaction_id(verify_transaction):
-    res = await verify_transaction
-    return res['data']['id']
-
-
-#
-# @pytest.fixture(scope='session')
-# async def charge_authorization(create_charge, init):
-#     charge = await create_charge
-#     auth = charge['authorization']['authorization_code']
-#     data = {**init, "authorization_code": auth}
-#     return data
+    return {'email': "customer@email.com", 'amount': "50000", "kwargs": {}}
 
 
 @pytest.fixture(scope='session')
 def init_charge():
-    return {'email': 'ichingasamuel@gmail.com', 'amount': '50000', 'bank': {'code': "057", 'account_number': "0000000000"}, 'birthday': "1995-12-23"}
+    return {'email': 'customer@email.com', 'amount': '50000', 'bank': {'code': "057", 'account_number': "0987654321"}, 'birthday': "1967-12-23"}
 
 
 @pytest.fixture(scope="session")
@@ -148,3 +134,41 @@ def splits():
             "bearer_type": "subaccount",
             "bearer_subaccount": "ACCT_hdl8abxl8drhrl3"
             }
+
+
+@pytest.fixture(scope="session")
+def subaccount():
+    return {"business_name": "Sunshine Studios", "settlement_bank": "044", "account_number": "0193274682", "percentage_charge": 18.2}
+
+
+@pytest.fixture(scope="session")
+def invoice():
+    return {"description": "a test invoice",
+            "line_items": [
+                {"name": "item 1", "amount": 20000},
+                {"name": "item 2", "amount": 20000}
+            ],
+            "tax": [
+                {"name": "VAT", "amount": 2000}
+            ],
+            "customer": "CUS_xwaj0txjryg393b",
+            "due_date": "2020-07-08"
+            }
+
+
+@pytest.fixture(scope="session")
+def get_dva():
+    return {
+        "email": "janedoe@test.com",
+        "first_name": "Jane",
+        "middle_name": "Karen",
+        "last_name": "Doe",
+        "phone": "+2348100000000",
+        "preferred_bank": "test-bank",
+        "country": "NG"
+    }
+
+
+@pytest.fixture(scope="session")
+def split_dva():
+    return {"customer": 481193, "preferred_bank": "wema-bank", "split_code": "SPL_e7jnRLtzla"}

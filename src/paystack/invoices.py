@@ -1,9 +1,10 @@
 from datetime import datetime
+from typing import Literal
 
 from .base import Base
 
 
-class Invoice(Base):
+class Invoices(Base):
     """
     The Invoices API allows you issue out and manage payment requests
     """
@@ -12,7 +13,7 @@ class Invoice(Base):
         url = "/paymentrequest/"
         self.url = url.format
 
-    async def create(self, *, customer: str, amount: int, **kwargs):
+    async def create(self, *, customer: str, amount: int | None = None, **kwargs):
         """
         Create an invoice for payment on your integration
         :param customer: Customer id or code
@@ -20,10 +21,12 @@ class Invoice(Base):
         :param kwargs:
         :return: Response
         """
-        data = {"customer": customer, "amount": amount, **kwargs}
+        data = {"customer": customer, **kwargs}
+        data.update({'amount': amount}) if amount else ...
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, customer: str, status: str, currency: str, include_archive: str, from_: datetime | None = None, perPage: int = 50, page: int = 1, **kwargs):
+    async def list(self, customer: str, status: str, currency: Literal['NGN', 'GHS', 'ZAR', 'USD'], include_archive: str, from_: datetime | str = "",
+                   perPage: int = 50, page: int = 1, **kwargs):
         """
         List the invoice available on your integration.
         :param page: Specify exactly what page you want to retrieve. If not specify we use a default value of 1.
@@ -36,9 +39,9 @@ class Invoice(Base):
         :param kwargs:
         :return: Response
         """
-        params = {"customer": customer, "status": status, "currency": currency, "include_archive": include_archive, "perPage": perPage,
-                  "page": page}
-        params.update({'from': from_, **kwargs})
+        params = {"customer": customer, "status": status, "currency": currency, "include_archive": include_archive, "perPage": perPage, "page": page,
+                  **kwargs}
+        params.update({'from': from_}) if from_ else ...
         return await self.get(url=self.url(""), params=params)
 
     async def view(self, *, id_or_code: str):
@@ -47,8 +50,7 @@ class Invoice(Base):
         :param id_or_code: The invoice ID or code you want to fetch
         :return: Response
         """
-        params = {'id_or_code': id_or_code}
-        return await self.get(url=self.url(f"{id_or_code}"), params=params)
+        return await self.get(url=self.url(f"{id_or_code}"))
 
     async def verify(self, *, code: str):
         """
@@ -56,16 +58,14 @@ class Invoice(Base):
         :param code: Invoice code
         :return: Response
         """
-        params = {'code': code}
-        return await self.get(url=self.url(f"verify/{code}"), params=params)
+        return await self.get(url=self.url(f"verify/{code}"))
 
     async def send_notification(self, *, code: str):
         """
         :param code: Invoice code
         :return: Response
         """
-        params = {'code': code}
-        return await self.post(url=self.url(f"notify/{code}"), params=params)
+        return await self.post(url=self.url(f"notify/{code}"))
 
     async def invoice_totals(self):
         """
@@ -80,10 +80,9 @@ class Invoice(Base):
         :param code: Invoice code
         :return: Response
         """
-        data = {'code': code}
-        return await self.post(url=self.url(f"finalize/{code}"), json=data)
+        return await self.post(url=self.url(f"finalize/{code}"))
 
-    async def update(self, *, id_or_code: str, customer: str, amount: int, **kwargs):
+    async def update(self, *, id_or_code: str, customer: str, **kwargs):
         """
         Update an invoice details on your integration
         :param id_or_code: Invoice ID or slug
@@ -93,7 +92,7 @@ class Invoice(Base):
         :param kwargs:
         :return: Response
         """
-        data = {'id_or_code': id_or_code, 'customer': customer, 'amount': amount, **kwargs}
+        data = {'customer': customer, **kwargs}
         return await self.put(url=self.url(f"{id_or_code}"), json=data)
 
     async def archive(self, *, id_or_code: str):

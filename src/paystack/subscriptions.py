@@ -11,7 +11,7 @@ class Subscriptions(Base):
         url = "/subscription/"
         self.url = url.format
 
-    async def create(self, *, customer: str, plan: str, authorization: str, start_date: str = ""):
+    async def create(self, *, customer: str, plan: str, authorization: str = "", start_date: str = ""):
         """
         Create a subscription on your integration
         :param customer: Customer's email address or customer code
@@ -43,7 +43,6 @@ class Subscriptions(Base):
         :param id_or_code: The subscription ID or code you want to fetch
         :return: Response
         """
-        params = {'id_or_code': id_or_code}
         return await self.get(url=self.url(f"{id_or_code}"))
 
     async def enable(self, code: str, token: str):
@@ -72,8 +71,7 @@ class Subscriptions(Base):
         :param code: Subscription code
         :return: Response
         """
-        params = {'code': code}
-        return await self.get(url=self.url(f"{code}/manage/link"), params=params)
+        return await self.get(url=self.url(f"{code}/manage/link"))
 
     async def send_update_subscription_link(self, *, code):
         """
@@ -81,5 +79,4 @@ class Subscriptions(Base):
         :param code: Subscription code
         :return: Response
         """
-        data = {'code': code}
-        return await self.post(url=self.url(f"{code}/manage/email"), json=data)
+        return await self.post(url=self.url(f"{code}/manage/email"))

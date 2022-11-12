@@ -5,7 +5,7 @@ from . import BaseTest, validate_account
 
 class TestVerification(BaseTest):
 
-    async def test_verification(self, validate_account):
+    async def tests(self, validate_account):
         async with Verification() as verify:
             res = await verify.resolve_account_number(account_number="0022728151", bank_code="063")
             assert res['message'] != ""

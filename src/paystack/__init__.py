@@ -19,5 +19,6 @@ from .subscriptions import Subscriptions
 from .settlements import Settlements
 from .refund import Refund
 from .products import Products
-from .plans import Plan
-from .invoices import Invoice
+from .plans import Plans
+from .invoices import Invoices
+from .apple_pay import ApplePay

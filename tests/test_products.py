@@ -3,7 +3,7 @@ from . import BaseTest
 
 
 class TestProducts(BaseTest):
-    async def test_products(self):
+    async def tests(self):
         async with Products() as products:
             res = await products.create(name="The Product", description="An Awesome Product", price=500000, currency="NGN")
             data = res['data']

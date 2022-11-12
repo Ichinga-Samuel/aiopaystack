@@ -15,5 +15,5 @@ class Paystack:
         self.headers = {"Authorization": f"Bearer {self.secret_key}"}
 
     @property
-    def client(self):
+    def async_client(self):
         return AsyncClient(headers=self.headers, base_url="https://api.paystack.co")

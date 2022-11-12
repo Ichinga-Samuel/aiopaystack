@@ -3,13 +3,13 @@ from typing import Literal
 from .base import Base
 
 
-class Plan(Base):
+class Plans(Base):
     """
     The Plans API allows you create and manage installment payment options on your integration
     """
     def __init__(self):
         super().__init__()
-        url = "/plan/"
+        url = "/plan/{}"
         self.url = url.format
 
     async def create(self, *, name: str, amount: int, interval: Literal['daily', 'weekly', 'monthly', 'biannually', 'annually'], **kwargs):
@@ -24,7 +24,7 @@ class Plan(Base):
         data = {'name': name, 'amount': amount, 'interval': interval} | kwargs
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, perPage: int, page: int, **kwargs):
+    async def list(self, perPage: int = 50, page: int = 1, **kwargs):
         """
         List plans available on your integration.
         :param perPage: Specify how many records you want to retrieve per page.
@@ -41,10 +41,9 @@ class Plan(Base):
         :param id_or_code: The plan ID or code you want to fetch
         :return: Response
         """
-        params = {'id_or_code': id_or_code}
-        return await self.get(url=self.url(f"{id_or_code}"), params=params)
+        return await self.get(url=self.url(f"{id_or_code}"))
 
-    async def update(self, *, id_or_code: str, name: str, amount: str, interval: Literal['daily', 'weekly', 'monthly', 'biannually', 'annually'],
+    async def update(self, *, id_or_code: str, name: str, amount: int, interval: Literal['daily', 'weekly', 'monthly', 'biannually', 'annually'],
                      **kwargs):
         """
         Update a plan details on your integration
@@ -55,5 +54,5 @@ class Plan(Base):
         :param kwargs: Optional keyword args to form the body of the request
         :return: Response
         """
-        data = {'id_or_code': id_or_code, 'name': name, 'amount': amount, 'interval': interval, **kwargs}
+        data = {'name': name, 'amount': amount, 'interval': interval, **kwargs}
         return await self.put(url=self.url(f"{id_or_code}"), json=data)

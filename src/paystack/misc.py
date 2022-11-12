@@ -11,7 +11,7 @@ class Miscellaneous(Base):
         url = "/bank/{}"
         self.url = url.format
 
-    async def list_banks(self, *, country: str, use_cursor: bool, perPage: int, **kwargs):
+    async def list_banks(self, *, country: str = "nigeria", use_cursor: bool = True, perPage: int = 50, **kwargs):
         """
         Get a list of all supported banks and their properties
         :param country: The country from which to obtain the list of supported banks. e.g country=ghana or country=nigeria
@@ -36,12 +36,11 @@ class Miscellaneous(Base):
         """
         return await self.get(url=self.url(""))
 
-    async def list_states(self, *, authorization: str, country: int):
+    async def list_states(self, *, country: str):
         """
         Get a list of states for a country for address verification.
-        :param authorization: Set value to Bearer SECRET_KEY
         :param country: The country code of the states to list. It is gotten after the charge request.
         :return: Response
         """
-        params = {'authorization': authorization, 'country': country}
-        return await self.get(url = self.url(""), params=params)
+        params = {'country': country}
+        return await self.get(url="address_verification/states", params=params)

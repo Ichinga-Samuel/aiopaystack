@@ -1,33 +1,15 @@
 from paystack import TransferRecipient
 
-from . import BaseTest
+from . import BaseTest, recipient, recipients
 
 
 class TestTransferRecipient(BaseTest):
-    rec = {"type": "nuban", "name": "Tolu Robert", "account_number": "0100000001", "bank_code": "063", "currency": "NGN"}
-    batch = {"batch": [
-        {
-            "type": "nuban",
-            "name": "Habenero Mundane",
-            "account_number": "0123456789",
-            "bank_code": "033",
-            "currency": "NGN"
-        },
-        {
-            "type": "nuban",
-            "name": "Soft Merry",
-            "account_number": "9876543231",
-            "bank_code": "50211",
-            "currency": "NGN"
-        }]
-    }
-
-    async def test(self):
+    async def tests(self, recipient, recipients):
         async with TransferRecipient() as tr:
-            res = await tr.create(**self.rec)
+            res = await tr.create(**recipient)
             assert res['message'] != ""
 
-            res = await tr.bulk_create(**self.batch)
+            res = await tr.bulk_create(**recipients)
             assert res['message'] != ""
 
             res = await tr.list()

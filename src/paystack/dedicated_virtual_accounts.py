@@ -20,12 +20,28 @@ class DedicatedVirtualAccount(Base):
         data = {'customer': customer, **kwargs}
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, active: bool, currency: str = "NGN", **kwargs):
+    async def assign(self, email: str, first_name: str, last_name: str, phone: str, preferred_bank: str, country: str, **kwargs):
+        """
+        With this endpoint, you can create a customer, validate the customer, and assign a DVA to the customer.
+        :param email: Customer email address
+        :param first_name: Customer first name
+        :param last_name: Customer last name
+        :param phone: Customer phone number
+        :param preferred_bank: The bank slug for preferred bank. To get a list of available banks, use the List Providers endpoint
+        :param country: Currently accepts NG only
+        :param kwargs: Optional parameters
+        :return:
+        """
+        data = {'email': email, 'first_name': first_name, 'last_name': last_name,'phone': phone, 'country': country, 'preferred_bank': preferred_bank,
+                **kwargs}
+        return await self.post(url=self.url('assign'), json=data)
+
+    async def list(self, active: bool = True, currency: str = "NGN", **kwargs):
         """
         List dedicated virtual accounts available on your integration.
         :param active: Status of the dedicated virtual account
         :param currency: The currency of the dedicated virtual account. Only NGN is currently allowed
-        :param kwargs:
+        :param kwargs: Optional parameters
         :return: Response
         """
         params = {'active': active, 'currency': currency, **kwargs}
@@ -37,8 +53,7 @@ class DedicatedVirtualAccount(Base):
         :param dedicated_account_id: ID of dedicated virtual account
         :return: Response
         """
-        params = {'dedicated_account_id': dedicated_account_id}
-        return await self.get(url=self.url(f"{dedicated_account_id}"), params=params)
+        return await self.get(url=self.url(f"{dedicated_account_id}"))
 
     async def deactivate(self, *, dedicated_account_id):
         """
@@ -46,8 +61,7 @@ class DedicatedVirtualAccount(Base):
         :param dedicated_account_id: ID of dedicated virtual account
         :return: Response
         """
-        params = {'dedicated_account_id': dedicated_account_id}
-        return await self.delete(url=self.url(f"{dedicated_account_id}"), params=params)
+        return await self.delete(url=self.url(f"{dedicated_account_id}"))
 
     async def split(self, customer: str, **kwargs):
         """
@@ -68,7 +82,7 @@ class DedicatedVirtualAccount(Base):
         :return: Response
         """
         params = {'account_number': account_number, 'provider_slug': provider_slug, **kwargs}
-        return self.get(url=self.url("requery"), params=params)
+        return await self.get(url=self.url("requery"), params=params)
 
     async def remove_split(self, *, account_number: str):
         """
@@ -78,7 +92,7 @@ class DedicatedVirtualAccount(Base):
         :return: Response
         """
         data = {"account_number": account_number}
-        return await self.delete(url=self.url("split"), json=data)
+        return await self.delete(url=self.url("split"), params=data)
 
     async def fetch_providers(self):
         """

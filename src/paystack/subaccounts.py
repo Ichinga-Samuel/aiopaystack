@@ -10,10 +10,10 @@ class SubAccounts(Base):
     """
     def __init__(self):
         super().__init__()
-        url = "/subaccount/"
+        url = "/subaccount/{}"
         self.url = url.format
 
-    async def create(self, *, business_name: str, settlement_bank: str, account_number: str, percentage_charge: float, description: str, **kwargs):
+    async def create(self, *, business_name: str, settlement_bank: str, account_number: str, percentage_charge: float, description: str = "", **kwargs):
         """
         Create a subacount on your integration
         :param description: A description for this subaccount
@@ -28,7 +28,7 @@ class SubAccounts(Base):
                 "percentage_charge": percentage_charge, 'description': description, **kwargs}
         return await self.post(url=self.url(""), json=data)
 
-    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None = None, to: datetime | None = None):
+    async def list(self, *, perPage: int = 50, page: int = 1, from_: datetime | None | str = None, to: datetime | None | str = None):
         """
         List subaccounts available on your integration.
         :param perPage: Specify how many records you want to retrieve per page. If not specify we use a default value of 50.
@@ -46,17 +46,17 @@ class SubAccounts(Base):
         :param id_or_code: The subaccount ID or code you want to fetch
         :return: Response
         """
-        params = {'id_or_code': id_or_code}
         return await self.get(url=self.url(f"{id_or_code}"))
 
-    async def update(self, *, id_or_code: str, business_name: str, settlement_bank: str, **kwargs):
+    async def update(self, *, id_or_code: str, business_name: str, settlement_bank: str, account_number: str,  **kwargs):
         """
         Update a subaccount details on your integration
         :param settlement_bank: Bank Code for the bank. You can get the list of Bank Codes by calling the List Banks endpoint.
         :param business_name: Name of business for subaccount
         :param id_or_code: Subaccount's ID or code
+        :param account_number: Bank Account Number
         :param kwargs:
         :return: Response
         """
-        data = {'id_or_code': id_or_code, 'business_name': business_name, 'settlement_bank': settlement_bank, **kwargs}
-        return await self.put(url=self.url(""), json=data)
+        data = {'business_name': business_name, 'settlement_bank': settlement_bank, 'account_number': account_number, **kwargs}
+        return await self.put(url=self.url(f"{id_or_code}"), json=data)
