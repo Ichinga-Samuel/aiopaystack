@@ -2,15 +2,20 @@
 
 Asynchronous Python library for [Paystack](https://paystack.com/)
 
-Add your paystack secret key as an environment variable as PAY_STACK_SECRET_KEY
+## Installation
+```bash
+pip install aiopaystack
+```
 
+## Usage
+Add your paystack secret key as an environment variable as PAY_STACK_SECRET_KEY
 ```python
 from paystack import Transactions
 
 trans = Transactions()
 
-await trans.initialize(email="sam@gmail.com", amount='5000')
 # All parameters must be passed in as keywords. For both required and optional arguments.
+res = await trans.initialize(email="sam@gmail.com", amount='5000')
 
 # Passing secret key as an argument
 # This replaces any key set in the environment
@@ -25,6 +30,15 @@ async with Transactions() as trans:
 from typing import TypedDict, Any
 Response = TypedDict('Response', {'status_code': int, 'status': bool, 'message': str, 'data': dict | Any})
 
+# Sample response
+{'status': True,
+ 'message': 'Authorization URL created',
+ 'data': 
+     {'authorization_url': 'https://checkout.paystack.com/3521i62zf1i0ljl',
+      'access_code': '3521i62zf1i0ljl', 'reference': '2q16btxglw'
+      },
+ 'status_code': 200
+ }
 ## DOC Reference: <https://developers.paystack.co/v2.0/reference>
 ### Static Use
 ```
