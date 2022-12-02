@@ -1,7 +1,13 @@
 # aiopaystack
 
+
 Asynchronous Python library for [Paystack](https://paystack.com/)
 
+![GitHub](https://img.shields.io/github/license/ichinga-samuel/aiopaystack)
+![PyPI](https://img.shields.io/pypi/v/aiopaystack)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/aiopaystack)
+![GitHub issues](https://img.shields.io/github/issues/ichinga-samuel/aiopaystack)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/ichinga-samuel/aiopaystack/master/master)
 ## Installation
 ```bash
 pip install aiopaystack

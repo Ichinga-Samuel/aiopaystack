@@ -1,8 +1,8 @@
-name: Dev Workflow
+name: master
 on:
   push:
     branches:
-      - dev
+      - master
 
 jobs:
   push-to-repo:
