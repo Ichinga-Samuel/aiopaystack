@@ -1,39 +1,49 @@
 from paystack import Transactions
-
-from . import BaseTest, init
+from . import BaseTest, customer, transaction, customers
 
 
 class TestTransaction(BaseTest):
-    async def tests(self, init):
-        async with Transactions() as transactions:
-            res = await transactions.initialize(**init)
+    async def test_transactions(self, customer, transaction):
+        async with Transactions() as trans:
+            # Test transaction initialization
+            res = await trans.initialize(**transaction)
             data = res['data']
+            transaction |= data
             assert res['status'] is True
 
-            res = await transactions.list()
-            assert res['status'] is True
-
-            res = await transactions.verify(reference=data['reference'])
+            # Test transaction verification
+            res = await trans.verify(reference=transaction['reference'])
             data = res['data']
+            transaction |= data
+            assert data['status'] == 'abandoned'
+
+            # Test transaction listing
+            res = await trans.list(perPage=50)
             assert res['status'] is True
 
-            res = await transactions.fetch(id=data['id'])
+            # Test transaction fetching
+            res = await trans.fetch(id=transaction['id'])
+            data = res['data']
+            assert transaction['reference'] == data['reference']
+
+            # # Test transaction charging authorization
+            res = await trans.charge_authorization(email=transaction['email'], amount=transaction['amount'],
+                                                   authorization_code=transaction['access_code'])
+            assert res['status'] is False
+
+            # Test transaction timeline viewing
+            res = await trans.view_transaction_timeline(id_or_reference=transaction['reference'])
             assert res['status'] is True
 
-            res = await transactions.charge_authorization(email=init['email'], amount=init['amount'], authorization_code="AUTH_72btv547")
-            assert res['message'] != ""
-
-            res = await transactions.check_authorization(email=init['email'], amount=init['amount'], authorization_code="AUTH_72btv547")
-            assert res['message'] != ""
-
-            res = await transactions.view_transaction_timeline(id_or_reference=data['reference'])
+            # Test transaction totals
+            res = await trans.transaction_totals(perPage=10)
             assert res['status'] is True
 
-            res = await transactions.transaction_totals()
+            # Test transaction export
+            res = await trans.export_transactions()
             assert res['status'] is True
 
-            res = await transactions.export_transactions()
-            assert res['status'] is True
-
-            res = await transactions.partial_debit(email=init['email'], amount=init['amount'], authorization_code="AUTH_72btv547", currency="NGN")
-            assert res['message'] != ""
+            # Test transaction partial debit
+            res = await trans.partial_debit(email=transaction['email'], amount=transaction['amount'],
+                                            authorization_code=transaction['access_code'], currency="NGN")
+            assert res['status'] is False

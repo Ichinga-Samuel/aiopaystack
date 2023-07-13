@@ -1,25 +1,39 @@
 from paystack import Customers
-from . import BaseTest, customer, validate_customer
+from . import BaseTest, customer, customers
+from random import choice, randint
 
 
 class TestCustomers(BaseTest):
-    async def tests(self, customer, validate_customer):
-        async with Customers() as customers:
-            res = await customers.create(**customer)
+    async def tests(self, customer, customers):
+        async with Customers() as cus:
+            # Test customer creation
+            res = await cus.create(**customer)
             data = res['data']
+            assert data['email'] == customer['email']
+            customer |= data
+
+            # Test customers listing
+            res = await cus.list(perPage=50)
+            data = res['data']
+            customers.extend(data)
             assert res['status'] is True
 
-            res = await customers.list()
+            # Test customer fetching
+            res = await cus.fetch(email_or_code=customer['customer_code'])
+            data = res['data']
+            assert data['customer_code'] == customer['customer_code']
+
+            # Test customer updating
+            c = choice(customers)
+            res = await cus.update(code=c['customer_code'], metadata={'available': True})
+            data = res['data']
+            assert data['metadata']['available'] is True
+
+            # Test customer validation
+            customer['account_number'] = str(randint(1000000000, 9999999999))
+            res = await cus.validate(code=customer['customer_code'], **customer)
             assert res['status'] is True
 
-            res = await customers.validate(code=data['customer_code'], value=data['id'], **validate_customer)
-            assert res['status'] is True
-
-            res = await customers.update(code=data['customer_code'], first_name="Ichinga", last_name="Samuel")
-            assert res['message'] != ""
-
-            res = await customers.fetch(email_or_code=data['customer_code'])
-            assert res['status'] is True
-
-            res = await customers.set_risk_action(customer=data['customer_code'], email=data['email'], risk_action='allow')
+            # Test customer blacklisting
+            res = await cus.set_risk_action(customer=customer['customer_code'], email=customer['email'], risk_action='deny')
             assert res['status'] is True

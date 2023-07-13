@@ -1,6 +1,5 @@
 import os
-
-from httpx import AsyncClient
+from http.client import HTTPSConnection
 
 
 class Paystack:
@@ -12,8 +11,9 @@ class Paystack:
 
     def __init__(self, *, secret_key=""):
         self.secret_key = secret_key or os.getenv('PAY_STACK_SECRET_KEY') or getattr(self, 'secret_key', '')
-        self.headers = {"Authorization": f"Bearer {self.secret_key}"}
+        self.headers = {'Authorization': f'Bearer {self.secret_key}'}
 
     @property
-    def async_client(self):
-        return AsyncClient(headers=self.headers, base_url="https://api.paystack.co")
+    def client(self) -> HTTPSConnection:
+        client = HTTPSConnection('api.paystack.co')
+        return client

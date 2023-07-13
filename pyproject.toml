@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aiopaystack"
-version = "1.0.0"
+version = "2.0.0"
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
@@ -16,7 +16,6 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 keywords = ['paystack', 'asynchronous']
-dependencies = ['httpx >= 0.23.0']
 authors = [{name = "Ichinga Samuel", email = "ichingasamuel@gmail.com"}]
 description = "Asynchronous PayStack library"
 

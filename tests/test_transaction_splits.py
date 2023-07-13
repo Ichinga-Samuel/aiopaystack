@@ -1,29 +1,35 @@
 from paystack import TransactionSplits
-
-from . import BaseTest, splits
+from . import BaseTest, transaction_splits as splits
 
 
 class TestTransactionSplits(BaseTest):
 
     async def tests(self, splits):
         async with TransactionSplits() as trans_splits:
+
+            # Test Splits Creation
             res = await trans_splits.create(**splits)
-            assert res['message'] != ""
+            data = res['data']
+            splits |= data
+            assert data['total_subaccounts'] == 2
 
-            res = await trans_splits.list(name="split", active=True)
+            # Test List Splits
+            res = await trans_splits.list(name="", active=False)
             assert res['status'] is True
 
-            res = await trans_splits.search(name="split", active=True)
+            # Test Fetch Splits
+            res = await trans_splits.fetch(id=splits['id'])
+            assert splits['id'] == res['data']['id']
+
+            # Test Splits Update
+            res = await trans_splits.update(id=splits['id'], name="Test Splits", active=False)
+            splits |= res['data']
+            assert res['data']['name'] == 'Test Splits'
+
+            # Test Add Subaccount
+            res = await trans_splits.add_split_subaccount(id=splits['id'], subaccount="ACCT_29ej5oa80xdeja5", share=5)
             assert res['status'] is True
 
-            res = await trans_splits.fetch(id="split_id")
-            assert res['message'] != ""
-
-            res = await trans_splits.update(id="split_id", name="Newman", active=True)
-            assert res['message'] != ""
-
-            res = await trans_splits.add_split_subaccount(id="split_id", subaccount="ACCT_hdl8abxl8drhrl3", share=4000)
-            assert res['message'] != ""
-
-            res = await trans_splits.remove_subaccount_from_split(id="split_id", subaccount="ACCT_hdl8abxl8drhrl3")
-            assert res['message'] != ""
+            # Test Remove Subaccount
+            res = await trans_splits.remove_subaccount_from_split(id=splits['id'], subaccount="ACCT_29ej5oa80xdeja5")
+            assert res['status'] is True

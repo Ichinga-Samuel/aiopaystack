@@ -1,7 +1,9 @@
-from typing import Literal
 from datetime import datetime
+from typing import Literal
 
-from .base import Base
+from .base import Base, Response, Currency
+
+BearerType = Literal['subaccount', 'account', 'all-proportional', 'all']
 
 
 class TransactionSplits(Base):
@@ -14,20 +16,21 @@ class TransactionSplits(Base):
         url = '/split/{}'
         self.url = url.format
 
-    async def create(self, *, name: str, type: Literal['percentage', 'flat'], currency: Literal['NGN', 'GHS', 'ZAR', 'USD'],
-                           subaccounts: list[dict], bearer_type: Literal['subaccount', 'account', 'all-proportional', 'all'], bearer_subaccount: str):
+    async def create(self, *, name: str, type: Literal['percentage', 'flat'], currency: Currency,
+                     subaccounts: list[dict], bearer_type: BearerType, bearer_subaccount: str) -> Response:
         """
         Create a split payment on your integration
         :param name: Name of the transaction split
         :param type: The type of transaction split you want to create. You can use one of the following: percentage | flat
         :param currency: Any of NGN, GHS, ZAR, or USD
-        :param subaccounts: A list of object containing subaccount code and number of shares:[{subaccount: ‘ACT_xxxxxxxxxx’, share: xxx},{...}]
+        :param subaccounts: A list of object containing subaccount code and number of shares:
+            eg. [{subaccount: ‘ACT_xxxxxxxxxx’, share: xxx},{...}]
         :param bearer_type: Any of subaccount | account | all-proportional | all
         :param bearer_subaccount: Subaccount code
-        :return: Response
+        :return: Response Dict
         """
-        data = {'name': name, 'type': type, 'currency': currency, 'subaccounts': subaccounts, 'bearer_type': bearer_type,
-                'bearer_subaccount': bearer_subaccount}
+        data = {'name': name, 'type': type, 'currency': currency, 'subaccounts': subaccounts,
+                'bearer_type': bearer_type, 'bearer_subaccount': bearer_subaccount}
         return await self.post(url=self.url(""), json=data)
 
     async def list(self, name: str, active: bool, from_: datetime | None | str = None, **kwargs):

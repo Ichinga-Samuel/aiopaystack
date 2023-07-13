@@ -26,6 +26,46 @@ class Cacheable:
 
 
 @pytest.fixture(scope='session')
+def customers():
+    return [
+        {
+            'first_name': 'Ade',
+            'last_name': 'Wale',
+            'middle_name': 'Segun',
+            'email': 'adewale@email.com',
+            'phone': "+234123456789",
+            'preferred_bank': 'test-bank',
+            'country': 'NG',
+            'type': 'bank_account',
+            'account_number': '0123456789',
+            'bvn': '20012345677',
+            'bank_code': '007',
+            'metadata': {
+                'available': 'true'}
+        },
+        {
+            'first_name': 'Barko',
+            'last_name': 'Sarki',
+            'email': 'barkosarki@gmail.com',
+            'phone': "+234123456798",
+            'metadata': {
+                'available': 'true'}
+
+        }
+    ]
+
+
+@pytest.fixture(scope='session')
+def customer(customers):
+    return customers[0]
+
+
+@pytest.fixture(scope='session')
+def transaction(customer):
+    return {'email': customer['email'], 'amount': '20000'}
+
+
+@pytest.fixture(scope='session')
 def recipient():
     return {"type": "nuban", "name": "Tolu Robert", "account_number": "0100000001", "bank_code": "063", "currency": "NGN"}
 
@@ -50,29 +90,13 @@ def recipients():
     }
 
 
-@pytest.fixture(scope='session')
-def init():
-    return {'email': "customer@email.com", 'amount': "50000", "kwargs": {}}
+
 
 
 @pytest.fixture(scope='session')
 def init_charge():
     return {'email': 'customer@email.com', 'amount': '50000', 'bank': {'code': "057", 'account_number': "0987654321"}, 'birthday': "1967-12-23"}
 
-
-@pytest.fixture(scope="session")
-def customer():
-    seed = list("dfvkdfvnldfkdfffddfhfgjfgmldiejnvfbtgjewnfpclfmsdnkn")
-    slice = random.randint(4, 10)
-    random.shuffle(seed)
-    name = ''.join(seed[0: slice])
-    return {'email': f'{name}@gmail.com', 'first_name': 'Samuel', 'last_name': 'Ichinga', 'phone': '+2349037031782'}
-
-
-@pytest.fixture(scope="session")
-def validate_customer():
-    return {'email': 'ichingasamuel@gmail.com', 'first_name': 'Samuel', 'last_name': 'Ichinga', 'account_number': '0042926389', 'bvn': '20012345677',
-            'bank_code': '067', 'type': 'bank_account', 'country': 'NG'}
 
 
 @pytest.fixture(scope="session")
@@ -119,20 +143,20 @@ def bulk_transfer():
 
 
 @pytest.fixture(scope="session")
-def splits():
-    return {"name": "Percentage Split",
+def transaction_splits():
+    return {"name": "Test Split",
             "type": "percentage",
             "currency": "NGN",
             "subaccounts": [{
-                "subaccount": "ACCT_z3x6z3nbo14xsil",
+                "subaccount": "ACCT_clmnn0r1rw7mbwi",
                 "share": 20
             },
                 {
-                    "subaccount": "ACCT_pwwualwty4nhq9d",
-                    "share": 30
+                    "subaccount": "ACCT_xo65xntj0n21zmr",
+                    "share": 50
                 }],
-            "bearer_type": "subaccount",
-            "bearer_subaccount": "ACCT_hdl8abxl8drhrl3"
+            "bearer_type": "all",
+            "bearer_subaccount": None
             }
 
 
@@ -157,16 +181,8 @@ def invoice():
 
 
 @pytest.fixture(scope="session")
-def get_dva():
-    return {
-        "email": "janedoe@test.com",
-        "first_name": "Jane",
-        "middle_name": "Karen",
-        "last_name": "Doe",
-        "phone": "+2348100000000",
-        "preferred_bank": "test-bank",
-        "country": "NG"
-    }
+def dvac(customer):
+    return customer
 
 
 @pytest.fixture(scope="session")
